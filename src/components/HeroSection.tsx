@@ -28,10 +28,16 @@ export default function HeroSection({ slides }: Props) {
 
   if (!slides.length) {
     return (
-      <section className="bg-gradient-to-br from-gray-900 to-red-900 text-white py-24 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-black mb-4">Industrial Lubrication Solutions</h1>
-        <p className="text-lg text-gray-300 max-w-2xl mx-auto">Quality products for every application.</p>
-        <Link href="/products" className="mt-6 inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full transition-colors">
+      <section className="bg-gradient-to-br from-header via-nav to-nav-surface text-white py-24 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-brand/25 to-transparent pointer-events-none" aria-hidden />
+        <h1 className="relative text-4xl md:text-5xl font-black mb-4 border-b-4 border-brand inline-block pb-2">
+          Industrial Lubrication Solutions
+        </h1>
+        <p className="relative text-lg text-surface/90 max-w-2xl mx-auto">Quality products for every application.</p>
+        <Link
+          href="/products"
+          className="relative mt-6 inline-block bg-brand hover:bg-brand-hover text-header font-semibold px-8 py-3 rounded-full transition-colors"
+        >
           Shop Products
         </Link>
       </section>
@@ -46,27 +52,28 @@ export default function HeroSection({ slides }: Props) {
   return (
     <section className="relative overflow-hidden" style={{ minHeight: 480 }}>
       {/* Background */}
-      <div className="absolute inset-0 bg-gray-900">
+      <div className="absolute inset-0 bg-header">
         {bgUrl && (
           <Image src={bgUrl} alt={slide.heading} fill className="object-cover opacity-60" priority />
         )}
       </div>
 
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+      {/* Overlay + hero yellow tint */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-brand/20 to-transparent pointer-events-none" />
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 py-24 text-white">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 max-w-2xl leading-tight">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 max-w-2xl leading-tight border-l-4 border-brand pl-5">
           {slide.heading}
         </h1>
         {slide.subheading && (
-          <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-xl">{slide.subheading}</p>
+          <p className="text-lg md:text-xl text-surface/90 mb-8 max-w-xl">{slide.subheading}</p>
         )}
         {slide.cta && slide.ctaHref && (
           <Link
             href={slide.ctaHref}
-            className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full transition-colors text-lg"
+            className="inline-block bg-brand hover:bg-brand-hover text-header font-semibold px-8 py-3 rounded-full transition-colors text-lg"
           >
             {slide.cta}
           </Link>
@@ -81,7 +88,7 @@ export default function HeroSection({ slides }: Props) {
               key={`dot-${i}`}
               onClick={() => setCurrent(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${i === current ? 'bg-white scale-125' : 'bg-white/50'}`}
+              className={`w-2.5 h-2.5 rounded-full transition-all ${i === current ? 'bg-brand scale-125' : 'bg-white/50'}`}
             />
           ))}
         </div>

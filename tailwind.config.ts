@@ -9,16 +9,43 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "#fac11c",
-          hover: "#fbc733",
+        brand: {
+          DEFAULT: "#FFD200",
+          hover: "#E6BD00",
+          soft: "rgba(255, 210, 0, 0.2)",
         },
-        secondary: "#121212",
-        background: "#ffffff",
-        foreground: "#121212",
-        success: "#51a551",
-        error: "#f05d5d",
-        muted: "#4d4d4d",
+        header: "#000000",
+        nav: {
+          DEFAULT: "#1F1F1F",
+          surface: "#2A2A2A",
+        },
+        surface: {
+          DEFAULT: "#FFFFFF",
+          muted: "#F5F5F5",
+        },
+        text: {
+          DEFAULT: "#000000",
+          secondary: "#333333",
+          muted: "#777777",
+        },
+        border: {
+          DEFAULT: "#E0E0E0",
+        },
+        card: "#FFFFFF",
+ /* Semantic aliases for buttons */
+        cta: {
+          primary: "#FFD200",
+          "primary-hover": "#E6BD00",
+          secondary: "#000000",
+        },
+        primary: {
+          DEFAULT: "#FFD200",
+          hover: "#E6BD00",
+        },
+        secondary: "#000000",
+        background: "#FFFFFF",
+        foreground: "#000000",
+        muted: "#777777",
       },
       fontFamily: {
         sans: ["var(--font-instrument-sans)", "sans-serif"],

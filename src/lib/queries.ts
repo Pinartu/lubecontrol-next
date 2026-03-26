@@ -11,6 +11,21 @@ export const categoryPageByPathQuery = `*[_type == "categoryPage" && path == $pa
   ...,
   productCategory->{
     _id, title, slug, description, image
+  },
+  pdfDownloads[]{
+    _key,
+    title,
+    externalUrl,
+    file{
+      asset->{
+        url
+      }
+    },
+    thumbnail{
+      asset->{
+        url
+      }
+    }
   }
 }`
 

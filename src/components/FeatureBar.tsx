@@ -41,7 +41,7 @@ export default function FeatureBar({ items }: Props) {
   if (!items.length) return null
 
   return (
-    <div className="bg-red-600 text-white">
+    <div className="bg-brand text-header">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {items.map((item, i) => (
@@ -51,7 +51,7 @@ export default function FeatureBar({ items }: Props) {
               </div>
               <div>
                 <p className="font-semibold text-sm">{item.text}</p>
-                {item.sub && <p className="text-xs text-red-100">{item.sub}</p>}
+                {item.sub && <p className="text-xs text-text-secondary">{item.sub}</p>}
               </div>
             </div>
           ))}

@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
+      <body className="min-h-screen flex flex-col bg-surface text-text antialiased">
         <Header settings={settings} navItems={navItems} />
         <main className="flex-1">{children}</main>
         <Footer content={footer} />

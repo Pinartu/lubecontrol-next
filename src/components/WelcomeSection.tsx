@@ -15,16 +15,16 @@ export default function WelcomeSection({ title, body, ctaLabel, ctaHref }: Props
   if (!title && !body?.length) return null
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-surface">
       <div className="max-w-3xl mx-auto text-center">
-        {title && <h2 className="text-3xl font-bold text-gray-900 mb-6">{title}</h2>}
+        {title && <h2 className="text-3xl font-bold text-text mb-6">{title}</h2>}
         {body?.length ? (
-          <PortableBody value={body} className="text-left prose prose-gray max-w-none" />
+          <PortableBody value={body} className="text-left max-w-none" />
         ) : null}
         {ctaLabel && ctaHref && (
           <Link
             href={ctaHref}
-            className="mt-6 inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full transition-colors"
+            className="mt-6 inline-block bg-brand hover:bg-brand-hover text-header font-semibold px-8 py-3 rounded-full transition-colors"
           >
             {ctaLabel}
           </Link>

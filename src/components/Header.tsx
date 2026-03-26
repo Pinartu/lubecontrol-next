@@ -27,31 +27,48 @@ export default function Header({ settings, navItems }: Props) {
   const placeholder = settings?.searchPlaceholder ?? 'Search products…'
 
   return (
-    <header className="w-full shadow-md bg-white sticky top-0 z-50">
-      {/* Top bar */}
-      <div className="bg-gray-900 text-white text-sm py-1.5">
+    <header className="w-full shadow-md bg-surface sticky top-0 z-50">
+      {/* Top bar — primary header black */}
+      <div className="bg-header text-white text-sm py-1.5">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap gap-4 justify-between items-center">
           <div className="flex flex-wrap gap-4">
             {phones.map((p, i) => (
-              <a key={`ph-${i}`} href={`tel:${p.number.replace(/\s/g, '')}`} className="hover:text-red-400 transition-colors">
+              <a key={`ph-${i}`} href={`tel:${p.number.replace(/\s/g, '')}`} className="hover:text-brand transition-colors">
                 {p.label ? `${p.label}: ` : ''}{p.number}
               </a>
             ))}
             {emails.map((e, i) => (
-              <a key={`em-${i}`} href={`mailto:${e}`} className="hover:text-red-400 transition-colors">{e}</a>
+              <a key={`em-${i}`} href={`mailto:${e}`} className="hover:text-brand transition-colors">{e}</a>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Main header */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
+      {/* Main header — geniş logo alanı (≈2× önceki yükseklik) */}
+      <div className="max-w-7xl mx-auto px-4 py-2 md:py-3 flex items-center justify-between gap-4">
+        <Link
+          href="/"
+          className="flex flex-shrink-0 items-center gap-3 md:gap-4 min-h-[4.5rem] md:min-h-[6.5rem]"
+          aria-label={settings?.title ?? 'Lube Control — Home'}
+        >
           {settings?.logo?.asset?.url ? (
-            <Image src={settings.logo.asset.url} alt={settings.title ?? 'Logo'} width={180} height={50} className="h-12 w-auto object-contain" />
+            <Image
+              src={settings.logo.asset.url}
+              alt={settings.title ?? 'Lube Control'}
+              width={320}
+              height={140}
+              className="h-[4.5rem] md:h-[6.5rem] w-auto max-w-[min(100%,26rem)] object-contain object-left"
+              priority
+            />
           ) : (
-            <span className="text-2xl font-black text-red-600 tracking-tight">LubeControl</span>
+            <Image
+              src="/logo-lube-control.png"
+              alt="Lube Control"
+              width={400}
+              height={160}
+              className="h-[4.5rem] md:h-[6.5rem] w-auto max-w-[min(100%,28rem)] object-contain object-left"
+              priority
+            />
           )}
         </Link>
 
@@ -62,9 +79,9 @@ export default function Header({ settings, navItems }: Props) {
             id="site-search"
             type="search"
             placeholder={placeholder}
-            className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full border border-border rounded-full px-4 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-brand"
           />
-          <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600">
+          <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-brand">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -73,7 +90,7 @@ export default function Header({ settings, navItems }: Props) {
 
         {/* Mobile menu toggle */}
         <button
-          className="md:hidden p-2 text-gray-700 hover:text-red-600"
+          className="md:hidden p-2 text-text-secondary hover:text-brand"
           aria-label="Toggle navigation menu"
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
@@ -92,7 +109,7 @@ export default function Header({ settings, navItems }: Props) {
       </div>
 
       {/* Desktop nav */}
-      <nav aria-label="Main navigation" className="hidden md:block border-t border-gray-100 bg-white">
+      <nav aria-label="Main navigation" className="hidden md:block border-t border-black/10 bg-brand">
         <div className="max-w-7xl mx-auto px-4">
           <ul className="flex">
             {navItems.map((item) => (
@@ -104,7 +121,7 @@ export default function Header({ settings, navItems }: Props) {
               >
                 <Link
                   href={item.href}
-                  className="block px-4 py-3 text-sm font-semibold text-gray-800 hover:text-red-600 transition-colors whitespace-nowrap"
+                  className="block px-4 py-3 text-sm font-semibold text-header hover:underline underline-offset-4 decoration-2 whitespace-nowrap"
                 >
                   {item.label}
                   {item.columns?.length ? (
@@ -114,21 +131,21 @@ export default function Header({ settings, navItems }: Props) {
 
                 {/* Mega menu */}
                 {item.columns?.length && openTop === item.href && (
-                  <div className="absolute left-0 top-full bg-white border border-gray-200 shadow-xl rounded-b-lg p-6 z-50 grid gap-6 min-w-max"
+                  <div className="absolute left-0 top-full bg-card border border-border shadow-xl rounded-b-lg p-6 z-50 grid gap-6 min-w-max"
                        style={{ gridTemplateColumns: `repeat(${item.columns.length}, minmax(180px, 1fr))` }}>
                     {item.columns.map((col, ci) => (
                       <div key={`col-${ci}`}>
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{col.heading}</p>
+                        <p className="text-xs font-bold text-text-muted uppercase tracking-widest mb-2">{col.heading}</p>
                         {col.links.map((link, li) => (
                           <div key={`link-${li}`} className="mb-3">
-                            <Link href={link.href} className="block text-sm font-semibold text-gray-800 hover:text-red-600 mb-1">
+                            <Link href={link.href} className="block text-sm font-semibold text-text-secondary hover:text-brand mb-1">
                               {link.label}
                             </Link>
                             {link.subGroups?.map((sg, si) => (
                               <div key={`sg-${si}`} className="pl-3 mb-2">
-                                <p className="text-xs text-gray-500 font-medium mb-1">{sg.heading}</p>
+                                <p className="text-xs text-text-muted font-medium mb-1">{sg.heading}</p>
                                 {sg.links.map((sl, sli) => (
-                                  <Link key={`sl-${sli}`} href={sl.href} className="block text-xs text-gray-600 hover:text-red-600 py-0.5">
+                                  <Link key={`sl-${sli}`} href={sl.href} className="block text-xs text-text-secondary hover:text-brand py-0.5">
                                     {sl.label}
                                   </Link>
                                 ))}
@@ -148,7 +165,7 @@ export default function Header({ settings, navItems }: Props) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <nav id="mobile-menu" aria-label="Mobile navigation" className="md:hidden border-t border-gray-200 bg-white">
+        <nav id="mobile-menu" aria-label="Mobile navigation" className="md:hidden border-t border-black/10 bg-brand">
           <div className="px-4 py-2">
             <div role="search" className="mb-3">
               <label htmlFor="mobile-search" className="sr-only">Search products</label>
@@ -156,23 +173,23 @@ export default function Header({ settings, navItems }: Props) {
                 id="mobile-search"
                 type="search"
                 placeholder={placeholder}
-                className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full border border-border rounded-full px-4 py-2 text-sm bg-surface text-text focus:outline-none focus:ring-2 focus:ring-brand"
               />
             </div>
             {navItems.map((item) => (
-              <div key={item.href} className="border-b border-gray-100 last:border-0">
+              <div key={item.href} className="border-b border-black/10 last:border-0">
                 <Link
                   href={item.href}
-                  className="block py-2 text-sm font-semibold text-gray-800 hover:text-red-600"
+                  className="block py-2 text-sm font-semibold text-header hover:underline"
                   onClick={() => setMobileOpen(false)}
                 >
                   {item.label}
                 </Link>
                 {item.columns?.map((col, ci) => (
                   <div key={`mcol-${ci}`} className="pl-4 pb-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">{col.heading}</p>
+                    <p className="text-xs font-bold text-text-secondary uppercase mb-1">{col.heading}</p>
                     {col.links.map((link, li) => (
-                      <Link key={`mlink-${li}`} href={link.href} className="block text-sm text-gray-700 hover:text-red-600 py-0.5" onClick={() => setMobileOpen(false)}>
+                      <Link key={`mlink-${li}`} href={link.href} className="block text-sm text-header/90 hover:underline py-0.5" onClick={() => setMobileOpen(false)}>
                         {link.label}
                       </Link>
                     ))}

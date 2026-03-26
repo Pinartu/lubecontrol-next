@@ -1,26 +1,31 @@
 import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
+import type { BreadcrumbItem } from '@/lib/navigation'
 
-type Crumb = { label: string; href: string }
+interface Props {
+  items: BreadcrumbItem[]
+}
 
-export default function Breadcrumb({ crumbs }: { crumbs: Crumb[] }) {
+export default function Breadcrumb({ items }: Props) {
+  if (items.length <= 1) return null
+
   return (
-    <nav aria-label="Breadcrumb" className="bg-gray-50 border-b border-gray-200">
-      <div className="container mx-auto px-4 py-2.5 flex flex-wrap items-center gap-1 text-sm text-muted">
-        {crumbs.map((crumb, i) => (
-          <span key={crumb.href} className="flex items-center gap-1">
-            {i < crumbs.length - 1 ? (
-              <>
-                <Link href={crumb.href} className="hover:text-primary transition-colors">
-                  {crumb.label}
-                </Link>
-                <ChevronRight className="w-3 h-3 text-gray-400" />
-              </>
-            ) : (
-              <span className="text-secondary font-semibold">{crumb.label}</span>
-            )}
-          </span>
-        ))}
+    <nav aria-label="Breadcrumb" className="py-3 px-4 bg-gray-50 border-b border-gray-200">
+      <div className="max-w-7xl mx-auto">
+        <ol className="flex flex-wrap items-center gap-1 text-sm text-gray-500">
+          {items.map((item, i) => {
+            const isLast = i === items.length - 1
+            return (
+              <li key={`bc-${i}`} className="flex items-center gap-1">
+                {i > 0 && <span aria-hidden="true" className="text-gray-300">/</span>}
+                {isLast ? (
+                  <span aria-current="page" className="text-gray-800 font-medium">{item.label}</span>
+                ) : (
+                  <Link href={item.href} className="hover:text-red-600 transition-colors">{item.label}</Link>
+                )}
+              </li>
+            )
+          })}
+        </ol>
       </div>
     </nav>
   )

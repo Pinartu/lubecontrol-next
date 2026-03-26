@@ -1,78 +1,64 @@
-import {notFound} from 'next/navigation'
+import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+import { getCategoryPageByPath, getAllCategoryPaths, getSiteSettings, getMainNav, getProductsByCategory } from '@/lib/cms'
+import { mapNavItems, getBreadcrumbs } from '@/lib/navigation'
 import Breadcrumb from '@/components/Breadcrumb'
-import CategoryPage from '@/components/CategoryPage'
-import {
-  getNavigation,
-  findNavItem,
-  getBreadcrumbs,
-  getAllNavPaths,
-  normalizeSitePath,
-} from '@/lib/navigation'
-import {getCategoryPageByPath, getProductsByCategoryId, getSiteSettings} from '@/lib/cms'
-import type {Metadata} from 'next'
+import CategoryPageComponent from '@/components/CategoryPage'
 
-type Props = {
-  params: {slug: string[]}
+interface Props {
+  params: Promise<{ slug: string[] }>
 }
 
 export async function generateStaticParams() {
-  const navigation = await getNavigation()
-  const paths = getAllNavPaths(navigation)
-  return paths.map((slug) => ({slug}))
+  const paths = await getAllCategoryPaths()
+  return paths.map(({ path }) => ({
+    slug: path.replace(/^\//, '').split('/').filter(Boolean),
+  }))
 }
 
-export async function generateMetadata({params}: Props): Promise<Metadata> {
-  const navigation = await getNavigation()
-  const href = '/' + params.slug.join('/')
-  const item = findNavItem(href, navigation)
-  const path = normalizeSitePath(href)
-  const cat = await getCategoryPageByPath(path)
-  const titleBase = cat?.seoTitle || cat?.title || item?.label || params.slug[params.slug.length - 1].replace(/-/g, ' ')
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const path = '/' + slug.join('/')
+  const page = await getCategoryPageByPath(path)
+  const settings = await getSiteSettings()
+  const siteName = settings?.title ?? 'Lube Control'
+
   return {
-    title: `${titleBase} | Lube Control`,
-    description:
-      cat?.seoDescription ||
-      `Browse ${titleBase} products and solutions by Lube Control Australia.`,
+    title: page?.seoTitle || page?.title || slug[slug.length - 1] || path,
+    description: page?.seoDescription ?? undefined,
+    openGraph: { siteName },
   }
 }
 
-export default async function SlugPage({params}: Props) {
-  const href = '/' + params.slug.join('/')
-  const navigation = await getNavigation()
-  const item = findNavItem(href, navigation)
+export default async function SlugPage({ params }: Props) {
+  const { slug } = await params
+  const path = '/' + slug.join('/')
 
-  if (!item) return notFound()
-
-  const crumbs = getBreadcrumbs(href, navigation)
-  const path = normalizeSitePath(href)
-  const [categoryContent, siteSettings] = await Promise.all([
+  const [page, settings, nav] = await Promise.all([
     getCategoryPageByPath(path),
     getSiteSettings(),
+    getMainNav(),
   ])
 
-  const categoryId = categoryContent?.productCategory?._id
-  const products = categoryId ? await getProductsByCategoryId(categoryId) : []
+  if (!page) notFound()
 
-  const siteCta = siteSettings
-    ? {
-        categoryCtaTitle: siteSettings.categoryCtaTitle,
-        categoryCtaSubtitle: siteSettings.categoryCtaSubtitle,
-        categoryCtaPrimaryLabel: siteSettings.categoryCtaPrimaryLabel,
-        categoryCtaPrimaryHref: siteSettings.categoryCtaPrimaryHref,
-        categoryCtaSecondaryLabel: siteSettings.categoryCtaSecondaryLabel,
-        categoryCtaSecondaryHref: siteSettings.categoryCtaSecondaryHref,
-      }
-    : null
+  const products = page.productCategory?._id
+    ? await getProductsByCategory(page.productCategory._id)
+    : []
+
+  const navItems = mapNavItems(nav)
+  const breadcrumbs = getBreadcrumbs(navItems, path)
+  const pageTitle = slug[slug.length - 1]?.replace(/-/g, ' ') ?? path
 
   return (
-    <>
-      <Breadcrumb crumbs={crumbs} />
-      <CategoryPage
-        item={item}
-        categoryContent={categoryContent}
-        products={products || []}
-        siteCta={siteCta}
+    <div>
+      <Breadcrumb items={breadcrumbs} />
+      <CategoryPageComponent
+        page={page}
+        products={products}
+        settings={settings}
+        pageTitle={pageTitle}
       />
-    </>
+    </div>
   )
 }

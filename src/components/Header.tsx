@@ -1,168 +1,143 @@
 'use client'
-import Link from 'next/link'
+
+import { useState } from 'react'
 import Image from 'next/image'
-import {Search, ChevronDown, Phone, Mail, Menu, X} from 'lucide-react'
-import {useState} from 'react'
-import type {NavItem} from '@/lib/navigation.types'
+import Link from 'next/link'
+import type { SanityNavTopItem } from '@/lib/navigation'
 
-export type SiteSettingsHeader = {
-  phones?: {number?: string; label?: string | null}[] | null
-  emails?: string[] | null
-  searchPlaceholder?: string | null
-  logoUrl?: string | null
+interface SiteSettings {
+  title?: string
+  phones?: Array<{ label?: string; number: string }>
+  emails?: string[]
+  searchPlaceholder?: string
+  logo?: { asset?: { url?: string } }
 }
 
-type Props = {
-  navigation: NavItem[]
-  siteSettings?: SiteSettingsHeader | null
+interface Props {
+  settings: SiteSettings | null
+  navItems: SanityNavTopItem[]
 }
 
-const defaultPhones = [
-  {number: '1300917946', label: null},
-  {number: '+61829855630', label: null},
-]
-const defaultEmails = ['sales@lubecontrol.com.au']
-
-export default function Header({navigation, siteSettings}: Props) {
-  const [openMenu, setOpenMenu] = useState<string | null>(null)
+export default function Header({ settings, navItems }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [openTop, setOpenTop] = useState<string | null>(null)
 
-  const phones =
-    siteSettings?.phones?.filter((p) => p?.number)?.length ? siteSettings.phones : defaultPhones
-  const emails = siteSettings?.emails?.length ? siteSettings.emails : defaultEmails
-  const searchPh = siteSettings?.searchPlaceholder || 'Search products...'
-  const logoUrl = siteSettings?.logoUrl
+  const phones  = settings?.phones  ?? []
+  const emails  = settings?.emails  ?? []
+  const placeholder = settings?.searchPlaceholder ?? 'Search products…'
 
   return (
-    <header className="w-full bg-white sticky top-0 z-50 shadow-md">
-      <div className="bg-gray-100 border-b border-gray-200 py-1.5 text-xs hidden md:block">
-        <div className="container mx-auto px-4 flex items-center space-x-6 text-muted flex-wrap gap-y-1">
-          {phones.map((p, i) => (
-            <a
-              key={`${p.number}-${i}`}
-              href={`tel:${String(p.number).replace(/\s/g, '')}`}
-              className="flex items-center hover:text-primary transition-colors font-semibold"
-            >
-              <Phone className="w-3.5 h-3.5 mr-1" /> {p.label ? `${p.label} ` : ''}
-              {p.number}
-            </a>
-          ))}
-          {emails.map((e) => (
-            <a
-              key={e}
-              href={`mailto:${e}`}
-              className="flex items-center hover:text-primary transition-colors font-semibold"
-            >
-              <Mail className="w-3.5 h-3.5 mr-1" /> {e}
-            </a>
-          ))}
+    <header className="w-full shadow-md bg-white sticky top-0 z-50">
+      {/* Top bar */}
+      <div className="bg-gray-900 text-white text-sm py-1.5">
+        <div className="max-w-7xl mx-auto px-4 flex flex-wrap gap-4 justify-between items-center">
+          <div className="flex flex-wrap gap-4">
+            {phones.map((p, i) => (
+              <a key={`ph-${i}`} href={`tel:${p.number.replace(/\s/g, '')}`} className="hover:text-red-400 transition-colors">
+                {p.label ? `${p.label}: ` : ''}{p.number}
+              </a>
+            ))}
+            {emails.map((e, i) => (
+              <a key={`em-${i}`} href={`mailto:${e}`} className="hover:text-red-400 transition-colors">{e}</a>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 flex items-center justify-between gap-4">
-        <Link href="/" className="shrink-0 flex items-center gap-2">
-          {logoUrl ? (
-            <Image src={logoUrl} alt="Lube Control Logo" width={200} height={80} className="h-20 w-auto object-contain" />
+      {/* Main header */}
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        {/* Logo */}
+        <Link href="/" className="flex-shrink-0">
+          {settings?.logo?.asset?.url ? (
+            <Image src={settings.logo.asset.url} alt={settings.title ?? 'Logo'} width={180} height={50} className="h-12 w-auto object-contain" />
           ) : (
-            <Image src="/logo.png" alt="Lube Control Logo" width={200} height={80} className="h-20 w-auto object-contain" />
+            <span className="text-2xl font-black text-red-600 tracking-tight">LubeControl</span>
           )}
         </Link>
 
-        <div className="flex-1 max-w-2xl relative hidden lg:block" role="search">
-          <label htmlFor="desktop-search" className="sr-only">Search products</label>
+        {/* Search */}
+        <div role="search" className="hidden md:flex flex-1 max-w-md relative">
+          <label htmlFor="site-search" className="sr-only">Search products</label>
           <input
-            id="desktop-search"
-            type="text"
-            placeholder={searchPh}
-            className="w-full border border-gray-300 py-2.5 pl-4 pr-14 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary rounded-sm bg-gray-50"
+            id="site-search"
+            type="search"
+            placeholder={placeholder}
+            className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
-          <button
-            type="button"
-            aria-label="Search"
-            className="absolute right-0 top-0 bottom-0 bg-primary hover:bg-primary-hover text-secondary px-4 rounded-r-sm transition-colors flex items-center"
-          >
-            <Search className="w-5 h-5" />
+          <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </button>
         </div>
 
+        {/* Mobile menu toggle */}
         <button
-          type="button"
-          className="lg:hidden p-2"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          className="md:hidden p-2 text-gray-700 hover:text-red-600"
+          aria-label="Toggle navigation menu"
           aria-expanded={mobileOpen}
-          aria-controls="mobile-nav"
+          aria-controls="mobile-menu"
+          onClick={() => setMobileOpen((v) => !v)}
         >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
         </button>
       </div>
 
-      <nav aria-label="Main navigation" className="bg-[#1a2d4f] hidden lg:block">
-        <div className="container mx-auto px-4">
-          <ul className="flex items-center text-xs font-bold tracking-wider">
-            {navigation.map((item: NavItem) => (
+      {/* Desktop nav */}
+      <nav aria-label="Main navigation" className="hidden md:block border-t border-gray-100 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <ul className="flex">
+            {navItems.map((item) => (
               <li
-                key={item.label}
-                className="relative group"
-                onMouseEnter={() => item.children && setOpenMenu(item.label)}
-                onMouseLeave={() => setOpenMenu(null)}
+                key={item.href}
+                className="relative"
+                onMouseEnter={() => setOpenTop(item.href)}
+                onMouseLeave={() => setOpenTop(null)}
               >
                 <Link
                   href={item.href}
-                  className="flex items-center gap-1 px-4 py-4 text-white hover:bg-[#253d69] hover:text-primary transition-colors uppercase whitespace-nowrap"
+                  className="block px-4 py-3 text-sm font-semibold text-gray-800 hover:text-red-600 transition-colors whitespace-nowrap"
                 >
                   {item.label}
-                  {item.children && (
-                    <ChevronDown className="w-3 h-3 opacity-70 group-hover:rotate-180 transition-transform" />
-                  )}
+                  {item.columns?.length ? (
+                    <span className="ml-1 text-xs">▾</span>
+                  ) : null}
                 </Link>
 
-                {item.children && openMenu === item.label && (
-                  <div className="absolute top-full left-0 bg-white shadow-2xl border-t-4 border-primary z-50">
-                    <div className="flex gap-0 p-6 min-w-max">
-                      {item.children.map((col) => (
-                        <div
-                          key={col.heading}
-                          className="min-w-[220px] pr-8 mr-8 border-r border-gray-100 last:border-0 last:pr-0 last:mr-0"
-                        >
-                          <Link
-                            href={item.href}
-                            className="block font-heading font-bold text-secondary text-xs uppercase mb-3 pb-2 border-b-2 border-primary tracking-widest hover:text-primary transition-colors"
-                          >
-                            {col.heading}
-                          </Link>
-                          <ul className="space-y-1.5">
-                            {col.links.map((link) => (
-                              <li key={link.href}>
-                                <Link
-                                  href={link.href}
-                                  className="text-muted hover:text-primary text-sm transition-colors block py-0.5 hover:pl-1 transition-all"
-                                >
-                                  {link.children ? '▸ ' : ''}
-                                  {link.label}
-                                </Link>
-                                {link.children && (
-                                  <ul className="ml-3 mt-1 space-y-1 border-l-2 border-primary/30 pl-2">
-                                    {link.children.flatMap((subGroup) =>
-                                      subGroup.links.map((sub) => (
-                                        <li key={sub.href}>
-                                          <Link
-                                            href={sub.href}
-                                            className="text-gray-500 hover:text-primary text-xs block py-0.5 hover:pl-1 transition-all"
-                                          >
-                                            {sub.label}
-                                          </Link>
-                                        </li>
-                                      )),
-                                    )}
-                                  </ul>
-                                )}
-                              </li>
+                {/* Mega menu */}
+                {item.columns?.length && openTop === item.href && (
+                  <div className="absolute left-0 top-full bg-white border border-gray-200 shadow-xl rounded-b-lg p-6 z-50 grid gap-6 min-w-max"
+                       style={{ gridTemplateColumns: `repeat(${item.columns.length}, minmax(180px, 1fr))` }}>
+                    {item.columns.map((col, ci) => (
+                      <div key={`col-${ci}`}>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{col.heading}</p>
+                        {col.links.map((link, li) => (
+                          <div key={`link-${li}`} className="mb-3">
+                            <Link href={link.href} className="block text-sm font-semibold text-gray-800 hover:text-red-600 mb-1">
+                              {link.label}
+                            </Link>
+                            {link.subGroups?.map((sg, si) => (
+                              <div key={`sg-${si}`} className="pl-3 mb-2">
+                                <p className="text-xs text-gray-500 font-medium mb-1">{sg.heading}</p>
+                                {sg.links.map((sl, sli) => (
+                                  <Link key={`sl-${sli}`} href={sl.href} className="block text-xs text-gray-600 hover:text-red-600 py-0.5">
+                                    {sl.label}
+                                  </Link>
+                                ))}
+                              </div>
                             ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
                   </div>
                 )}
               </li>
@@ -171,65 +146,42 @@ export default function Header({navigation, siteSettings}: Props) {
         </div>
       </nav>
 
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div id="mobile-nav" className="lg:hidden bg-[#1a2d4f] text-white border-t border-[#253d69] overflow-y-auto max-h-[80vh]">
+        <nav id="mobile-menu" aria-label="Mobile navigation" className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-2">
-            <div className="relative mb-4" role="search">
+            <div role="search" className="mb-3">
               <label htmlFor="mobile-search" className="sr-only">Search products</label>
               <input
                 id="mobile-search"
-                type="text"
-                placeholder="Search..."
-                className="w-full bg-white/10 text-white placeholder-white/50 border border-white/20 py-2 pl-4 pr-10 text-sm rounded-sm focus:outline-none focus:border-primary"
+                type="search"
+                placeholder={placeholder}
+                className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" aria-hidden="true" />
             </div>
-            {navigation.map((item: NavItem) => (
-              <div key={item.label} className="border-b border-[#253d69]">
+            {navItems.map((item) => (
+              <div key={item.href} className="border-b border-gray-100 last:border-0">
                 <Link
                   href={item.href}
-                  className="block py-3 font-bold text-sm uppercase tracking-wider hover:text-primary transition-colors"
+                  className="block py-2 text-sm font-semibold text-gray-800 hover:text-red-600"
                   onClick={() => setMobileOpen(false)}
                 >
                   {item.label}
                 </Link>
-                {item.children && (
-                  <div className="pl-4 pb-2">
-                    {item.children.map((group) => (
-                      <div key={group.heading} className="mb-3">
-                        <p className="text-primary text-xs font-bold uppercase mb-1">{group.heading}</p>
-                        {group.links.map((link) => (
-                          <div key={link.href}>
-                            <Link
-                              href={link.href}
-                              className="block text-gray-300 hover:text-primary text-sm py-1 transition-colors"
-                              onClick={() => setMobileOpen(false)}
-                            >
-                              {link.label}
-                            </Link>
-                            {link.children &&
-                              link.children.flatMap((sg) =>
-                                sg.links.map((sub) => (
-                                  <Link
-                                    key={sub.href}
-                                    href={sub.href}
-                                    className="block text-gray-400 hover:text-primary text-xs py-0.5 pl-3 border-l border-primary/30 ml-2 transition-colors"
-                                    onClick={() => setMobileOpen(false)}
-                                  >
-                                    {sub.label}
-                                  </Link>
-                                )),
-                              )}
-                          </div>
-                        ))}
-                      </div>
+                {item.columns?.map((col, ci) => (
+                  <div key={`mcol-${ci}`} className="pl-4 pb-2">
+                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">{col.heading}</p>
+                    {col.links.map((link, li) => (
+                      <Link key={`mlink-${li}`} href={link.href} className="block text-sm text-gray-700 hover:text-red-600 py-0.5" onClick={() => setMobileOpen(false)}>
+                        {link.label}
+                      </Link>
                     ))}
                   </div>
-                )}
+                ))}
               </div>
             ))}
           </div>
-        </div>
+        </nav>
       )}
     </header>
   )

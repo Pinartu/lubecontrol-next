@@ -1,110 +1,25 @@
-import {defineQuery} from 'next-sanity'
+// Singleton document queries
+export const siteSettingsQuery = `*[_type == "siteSettings" && _id == "siteSettings"][0]`
+export const mainNavQuery      = `*[_type == "mainNavigation" && _id == "mainNavigation"][0]`
+export const footerQuery       = `*[_type == "footerContent" && _id == "footerContent"][0]`
+export const homePageQuery     = `*[_type == "homePage" && _id == "homePage"][0]`
+export const cataloguePageQuery = `*[_type == "cataloguePage" && _id == "cataloguePage"][0]`
+export const contactPageQuery   = `*[_type == "contactPage" && _id == "contactPage"][0]`
 
-export const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
+// Dynamic content queries
+export const categoryPageByPathQuery = `*[_type == "categoryPage" && path == $path][0]{
+  ...,
+  productCategory->{
+    _id, title, slug, description, image
+  }
+}`
+
+export const productsByCategoryQuery = `*[_type == "product" && category._ref == $catId]{
+  _id,
   title,
+  "slug": slug.current,
   description,
-  logo,
-  ogImage,
-  phones,
-  emails,
-  contactEmail,
-  contactPhone,
-  address,
-  searchPlaceholder,
-  socialLinks,
-  categoryCtaTitle,
-  categoryCtaSubtitle,
-  categoryCtaPrimaryLabel,
-  categoryCtaPrimaryHref,
-  categoryCtaSecondaryLabel,
-  categoryCtaSecondaryHref
-}`)
+  image
+}`
 
-export const mainNavigationQuery = defineQuery(`*[_id == "mainNavigation"][0]{
-  items[]{
-    label,
-    href,
-    columns[]{
-      heading,
-      links[]{
-        label,
-        href,
-        subGroups[]{
-          heading,
-          links[]{ label, href }
-        }
-      }
-    }
-  }
-}`)
-
-export const homePageQuery = defineQuery(`*[_id == "homePage"][0]{
-  heroSlides[]{ heading, subheading, cta, ctaHref, backgroundImage },
-  featureItems[]{ icon, text, sub },
-  welcomeTitle,
-  welcomeBody,
-  welcomeCtaLabel,
-  welcomeCtaHref,
-  solutionsTitle,
-  solutionsSubtitle,
-  solutionCards[]{ title, description, href, emoji, image }
-}`)
-
-export const footerContentQuery = defineQuery(`*[_id == "footerContent"][0]{
-  columns[]{ title, body, links[]{ label, href } },
-  copyrightCompany
-}`)
-
-export const cataloguePageQuery = defineQuery(`*[_id == "cataloguePage"][0]{
-  title,
-  intro,
-  items[]{ title, description, externalUrl, "fileUrl": file.asset->url },
-  bottomTitle,
-  bottomText,
-  bottomButtonLabel,
-  bottomButtonHref
-}`)
-
-export const contactPageQuery = defineQuery(`*[_id == "contactPage"][0]{
-  title,
-  intro,
-  useSiteSettingsContact,
-  locationLabel,
-  locationText,
-  hours,
-  formSectionTitle,
-  fieldFirstName,
-  fieldLastName,
-  fieldEmail,
-  fieldPhone,
-  fieldMessage,
-  submitLabel
-}`)
-
-export const categoryPageByPathQuery = defineQuery(`
-  *[_type == "categoryPage" && path == $path][0]{
-    path,
-    title,
-    seoTitle,
-    seoDescription,
-    intro,
-    productCategory->{ _id, title, slug },
-    ctaTitle,
-    ctaSubtitle,
-    ctaPrimaryLabel,
-    ctaPrimaryHref,
-    ctaSecondaryLabel,
-    ctaSecondaryHref
-  }
-`)
-
-export const productsByCategoryQuery = defineQuery(`
-  *[_type == "product" && category._ref == $categoryId] | order(title asc) {
-    _id,
-    title,
-    "slug": slug.current,
-    images,
-    description,
-    features
-  }
-`)
+export const allCategoryPathsQuery = `*[_type == "categoryPage"]{path}`

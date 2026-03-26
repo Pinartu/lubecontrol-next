@@ -1,78 +1,53 @@
 import Link from 'next/link'
 
-export type FooterColumn = {
-  title?: string | null
-  body?: string | null
-  links?: {label?: string | null; href?: string | null}[] | null
+interface FooterLink {
+  label: string
+  href: string
 }
 
-type Props = {
-  columns?: FooterColumn[] | null
-  copyrightCompany?: string | null
+interface FooterColumn {
+  title: string
+  body?: string
+  links?: FooterLink[]
 }
 
-const defaultColumns: FooterColumn[] = [
-  {
-    title: 'ABOUT US',
-    body: 'Global Supplier of Quality Lubrication Solutions & Products. We offer Automatic Lubrication Systems, Lubricants, Fluid Handling Equipment, and more.',
-  },
-  {
-    title: 'QUICK LINKS',
-    links: [
-      {label: 'Products', href: '/fluid-handling'},
-      {label: 'Catalogue', href: '/catalogue'},
-      {label: 'Contact', href: '/contact'},
-    ],
-  },
-  {
-    title: 'CATEGORIES',
-    links: [
-      {label: 'Fluid Handling', href: '/fluid-handling'},
-      {label: 'Auto Lube Systems', href: '/auto-lube-systems'},
-      {label: 'Lubricants', href: '/lubricants'},
-    ],
-  },
-  {
-    title: 'CONTACT',
-    body: '1300 917 946\nsales@lubecontrol.com.au\nAustralia Wide Delivery',
-  },
-]
+interface FooterContent {
+  columns?: FooterColumn[]
+  copyrightCompany?: string
+}
 
-export default function Footer({columns, copyrightCompany}: Props) {
-  const cols = columns?.filter((c) => c.title)?.length ? columns : defaultColumns
-  const company = copyrightCompany || 'Lube Control Pty Ltd'
+interface Props {
+  content: FooterContent | null
+}
+
+export default function Footer({ content }: Props) {
+  const columns = content?.columns ?? []
+  const company = content?.copyrightCompany ?? 'Lube Control'
+  const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-secondary text-white pt-16 pb-8">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-        {cols.map((col, idx) => (
-          <div key={`footer-col-${idx}`}>
-            <h3 className="font-heading font-bold text-xl mb-4 text-primary">{col.title}</h3>
-            {col.body ? (
-              <p className="text-sm text-gray-400 mb-4 leading-relaxed whitespace-pre-line">{col.body}</p>
-            ) : null}
-            {col.links?.length ? (
-              <ul className="space-y-2 text-sm text-gray-400">
-                {col.links.map(
-                  (l) =>
-                    l.href &&
-                    l.label && (
-                      <li key={l.href}>
-                        <Link href={l.href} className="hover:text-primary transition-colors">
-                          {l.label}
-                        </Link>
-                      </li>
-                    ),
-                )}
-              </ul>
-            ) : null}
+    <footer className="bg-gray-900 text-gray-300 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {columns.length > 0 && (
+          <div className="grid gap-8 mb-10"
+               style={{ gridTemplateColumns: `repeat(auto-fit, minmax(200px, 1fr))` }}>
+            {columns.map((col, ci) => (
+              <div key={`fcol-${ci}`}>
+                <h3 className="text-white font-semibold mb-3">{col.title}</h3>
+                {col.body && <p className="text-sm leading-relaxed mb-3 text-gray-400">{col.body}</p>}
+                {col.links?.map((link, li) => (
+                  <Link key={`fl-${ci}-${li}`} href={link.href} className="block text-sm text-gray-400 hover:text-white transition-colors mb-1">
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="container mx-auto px-4 border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-        <p>
-          &copy; {new Date().getFullYear()} {company}. All rights reserved.
-        </p>
+        )}
+
+        <div className="border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+          &copy; {year} {company}. All rights reserved.
+        </div>
       </div>
     </footer>
   )

@@ -1,62 +1,36 @@
-import type {Metadata} from 'next'
-import {Work_Sans, Instrument_Sans} from 'next/font/google'
+import type { Metadata } from 'next'
 import './globals.css'
+import { getSiteSettings, getMainNav, getFooter } from '@/lib/cms'
+import { mapNavItems } from '@/lib/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import {getNavigation} from '@/lib/navigation'
-import {getSiteSettings, getFooterContent} from '@/lib/cms'
-import {urlFor} from '@/lib/sanity'
-
-const workSans = Work_Sans({
-  subsets: ['latin'],
-  variable: '--font-work-sans',
-})
-
-const instrumentSans = Instrument_Sans({
-  subsets: ['latin'],
-  variable: '--font-instrument-sans',
-})
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteSettings = await getSiteSettings()
+  const settings = await getSiteSettings()
   return {
-    title: siteSettings?.title || 'Lube Control Rebuild',
-    description: siteSettings?.description || 'Global Supplier of Quality Lubrication Solutions & Products',
+    title: {
+      default: settings?.title ?? 'Lube Control',
+      template: `%s | ${settings?.title ?? 'Lube Control'}`,
+    },
+    description: settings?.description ?? 'Industrial lubrication solutions.',
   }
 }
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  const [siteSettings, navigation, footer] = await Promise.all([
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const [settings, nav, footer] = await Promise.all([
     getSiteSettings(),
-    getNavigation(),
-    getFooterContent(),
+    getMainNav(),
+    getFooter(),
   ])
 
-  const logoUrl =
-    siteSettings?.logo && (siteSettings.logo as {asset?: unknown}).asset
-      ? urlFor(siteSettings.logo).width(400).url()
-      : null
+  const navItems = mapNavItems(nav)
 
   return (
     <html lang="en">
-      <body
-        className={`${instrumentSans.variable} ${workSans.variable} font-sans antialiased bg-background text-foreground flex flex-col min-h-screen`}
-      >
-        <Header
-          navigation={navigation}
-          siteSettings={{
-            phones: siteSettings?.phones,
-            emails: siteSettings?.emails,
-            searchPlaceholder: siteSettings?.searchPlaceholder,
-            logoUrl,
-          }}
-        />
-        <main className="flex-grow">{children}</main>
-        <Footer columns={footer?.columns} copyrightCompany={footer?.copyrightCompany} />
+      <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
+        <Header settings={settings} navItems={navItems} />
+        <main className="flex-1">{children}</main>
+        <Footer content={footer} />
       </body>
     </html>
   )

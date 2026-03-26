@@ -1,40 +1,50 @@
-import {client} from '@/lib/sanity'
+import { client } from './sanity'
 import {
-  cataloguePageQuery,
-  categoryPageByPathQuery,
-  contactPageQuery,
-  footerContentQuery,
-  homePageQuery,
-  productsByCategoryQuery,
   siteSettingsQuery,
-} from '@/lib/queries'
+  mainNavQuery,
+  footerQuery,
+  homePageQuery,
+  cataloguePageQuery,
+  contactPageQuery,
+  categoryPageByPathQuery,
+  productsByCategoryQuery,
+  allCategoryPathsQuery,
+} from './queries'
 
-const opts = {next: {tags: ['sanity'] as string[], revalidate: 60}}
+const revalidate = 60
 
 export async function getSiteSettings() {
-  return client.fetch(siteSettingsQuery, {}, opts)
+  return client.fetch(siteSettingsQuery, {}, { next: { revalidate, tags: ['siteSettings'] } })
+}
+
+export async function getMainNav() {
+  return client.fetch(mainNavQuery, {}, { next: { revalidate, tags: ['mainNavigation'] } })
+}
+
+export async function getFooter() {
+  return client.fetch(footerQuery, {}, { next: { revalidate, tags: ['footerContent'] } })
 }
 
 export async function getHomePage() {
-  return client.fetch(homePageQuery, {}, opts)
-}
-
-export async function getFooterContent() {
-  return client.fetch(footerContentQuery, {}, opts)
+  return client.fetch(homePageQuery, {}, { next: { revalidate, tags: ['homePage'] } })
 }
 
 export async function getCataloguePage() {
-  return client.fetch(cataloguePageQuery, {}, opts)
+  return client.fetch(cataloguePageQuery, {}, { next: { revalidate, tags: ['cataloguePage'] } })
 }
 
 export async function getContactPage() {
-  return client.fetch(contactPageQuery, {}, opts)
+  return client.fetch(contactPageQuery, {}, { next: { revalidate, tags: ['contactPage'] } })
 }
 
 export async function getCategoryPageByPath(path: string) {
-  return client.fetch(categoryPageByPathQuery, {path}, opts)
+  return client.fetch(categoryPageByPathQuery, { path }, { next: { revalidate, tags: ['categoryPage'] } })
 }
 
-export async function getProductsByCategoryId(categoryId: string) {
-  return client.fetch(productsByCategoryQuery, {categoryId}, opts)
+export async function getProductsByCategory(catId: string) {
+  return client.fetch(productsByCategoryQuery, { catId }, { next: { revalidate, tags: ['product'] } })
+}
+
+export async function getAllCategoryPaths(): Promise<Array<{ path: string }>> {
+  return client.fetch(allCategoryPathsQuery, {}, { next: { revalidate } })
 }

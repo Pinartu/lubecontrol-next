@@ -1,191 +1,146 @@
-import Breadcrumb from '@/components/Breadcrumb'
-import {Mail, Phone, MapPin} from 'lucide-react'
-import {getContactPage, getSiteSettings} from '@/lib/cms'
-import type {Metadata} from 'next'
+import type { Metadata } from 'next'
+import { getContactPage, getSiteSettings } from '@/lib/cms'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const p = await getContactPage()
+  const page = await getContactPage()
   return {
-    title: p?.title ? `${p.title} | Lube Control` : 'Contact Us | Lube Control',
-    description: p?.intro || 'Get in touch with Lube Control Pty Ltd — lubrication solutions for Australian industry.',
+    title: page?.title ?? 'Contact Us',
+    description: page?.intro ?? 'Get in touch with our team.',
   }
 }
 
 export default async function ContactPage() {
-  const [p, site] = await Promise.all([getContactPage(), getSiteSettings()])
+  const [page, settings] = await Promise.all([getContactPage(), getSiteSettings()])
 
-  const title = p?.title || 'CONTACT US'
-  const intro =
-    p?.intro || 'Get in touch with our team for expert lubrication advice and product enquiries.'
+  const title   = page?.title ?? 'Contact Us'
+  const intro   = page?.intro
+  const useSite = page?.useSiteSettingsContact !== false
 
-  const useSite = p?.useSiteSettingsContact !== false
-  type PhoneRow = {number?: string | null; label?: string | null}
-  const phones: PhoneRow[] =
-    useSite && site?.phones?.length
-      ? site.phones.filter((x: PhoneRow) => x?.number)
-      : [{number: '1300917946'}, {number: '+61 8 2985 5630'}]
-  const email =
-    useSite && site?.contactEmail
-      ? site.contactEmail
-      : useSite && site?.emails?.[0]
-        ? site.emails[0]
-        : 'sales@lubecontrol.com.au'
-  const locationLabel = p?.locationLabel || 'Location'
-  const locationText =
-    p?.locationText || site?.address || 'Australia Wide Delivery'
+  const phone   = useSite ? settings?.contactPhone  : undefined
+  const email   = useSite ? settings?.contactEmail  : undefined
+  const address = useSite ? settings?.address        : page?.locationText
 
-  const hours = p?.hours
+  const formTitle   = page?.formSectionTitle   ?? 'Send us a message'
+  const firstLabel  = page?.fieldFirstName     ?? 'First name'
+  const lastLabel   = page?.fieldLastName      ?? 'Last name'
+  const emailLabel  = page?.fieldEmail         ?? 'Email'
+  const phoneLabel  = page?.fieldPhone         ?? 'Phone'
+  const msgLabel    = page?.fieldMessage       ?? 'Message'
+  const submitLabel = page?.submitLabel        ?? 'Send message'
+
+  const hours = page?.hours
 
   return (
-    <>
-      <Breadcrumb crumbs={[{label: 'Home', href: '/'}, {label: 'Contact', href: '/contact'}]} />
-      <div className="container mx-auto px-4 py-12">
-        <div className="mb-10 border-b-4 border-primary pb-4">
-          <h1 className="font-heading text-4xl font-black text-secondary mb-3">{title}</h1>
-          <p className="text-muted">{intro}</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div>
-            <h2 className="font-heading font-bold text-xl text-secondary uppercase mb-6 border-b border-gray-200 pb-2">
-              Get In Touch
-            </h2>
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="bg-primary rounded-full p-2 shrink-0 mt-0.5">
-                  <Phone className="w-5 h-5 text-secondary" />
-                </div>
-                <div>
-                  <p className="font-bold text-secondary mb-1">Phone</p>
-                  {phones.map((ph, i) => (
-                    <a
-                      key={i}
-                      href={`tel:${String(ph.number).replace(/\s/g, '')}`}
-                      className="text-muted hover:text-primary transition-colors block"
-                    >
-                      {ph.number}
-                    </a>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary rounded-full p-2 shrink-0 mt-0.5">
-                  <Mail className="w-5 h-5 text-secondary" />
-                </div>
-                <div>
-                  <p className="font-bold text-secondary mb-1">Email</p>
-                  <a href={`mailto:${email}`} className="text-muted hover:text-primary transition-colors">
-                    {email}
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary rounded-full p-2 shrink-0 mt-0.5">
-                  <MapPin className="w-5 h-5 text-secondary" />
-                </div>
-                <div>
-                  <p className="font-bold text-secondary mb-1">{locationLabel}</p>
-                  <p className="text-muted whitespace-pre-line">{locationText}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-10 bg-[#1a2d4f] text-white p-6 rounded-sm">
-              <h3 className="font-heading font-bold text-xl uppercase mb-2">Business Hours</h3>
-              <div className="space-y-1 text-sm text-gray-300">
-                <div className="flex justify-between">
-                  <span>Monday – Friday</span>
-                  <span className="font-semibold text-primary">
-                    {hours?.weekdays || '8:00am – 5:00pm'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday</span>
-                  <span className="font-semibold text-gray-400">{hours?.saturday || 'Closed'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span className="font-semibold text-gray-400">{hours?.sunday || 'Closed'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="font-heading font-bold text-xl text-secondary uppercase mb-6 border-b border-gray-200 pb-2">
-              {p?.formSectionTitle || 'Send An Enquiry'}
-            </h2>
-            <form className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="contact-fname" className="block text-sm font-semibold text-secondary mb-1">
-                    {p?.fieldFirstName || 'First Name'} *
-                  </label>
-                  <input
-                    id="contact-fname"
-                    type="text"
-                    required
-                    autoComplete="given-name"
-                    className="w-full border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-primary rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="contact-lname" className="block text-sm font-semibold text-secondary mb-1">
-                    {p?.fieldLastName || 'Last Name'} *
-                  </label>
-                  <input
-                    id="contact-lname"
-                    type="text"
-                    required
-                    autoComplete="family-name"
-                    className="w-full border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-primary rounded-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="contact-email" className="block text-sm font-semibold text-secondary mb-1">
-                  {p?.fieldEmail || 'Email'} *
-                </label>
-                <input
-                  id="contact-email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="w-full border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-primary rounded-sm"
-                />
-              </div>
-              <div>
-                <label htmlFor="contact-phone" className="block text-sm font-semibold text-secondary mb-1">
-                  {p?.fieldPhone || 'Phone'}
-                </label>
-                <input
-                  id="contact-phone"
-                  type="tel"
-                  autoComplete="tel"
-                  className="w-full border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-primary rounded-sm"
-                />
-              </div>
-              <div>
-                <label htmlFor="contact-message" className="block text-sm font-semibold text-secondary mb-1">
-                  {p?.fieldMessage || 'Message'} *
-                </label>
-                <textarea
-                  id="contact-message"
-                  required
-                  rows={5}
-                  className="w-full border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:border-primary rounded-sm resize-none"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary-hover text-secondary font-heading font-bold py-3 px-8 uppercase tracking-wider transition-colors text-sm"
-              >
-                {p?.submitLabel || 'Send Enquiry'}
-              </button>
-            </form>
-          </div>
+    <div>
+      {/* Header */}
+      <div className="bg-gray-900 text-white py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-black">{title}</h1>
+          {intro && <p className="mt-3 text-gray-300 max-w-2xl">{intro}</p>}
         </div>
       </div>
-    </>
+
+      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Contact info */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact information</h2>
+
+          <div className="space-y-5">
+            {phone && (
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Phone</p>
+                  <a href={`tel:${phone.replace(/\s/g, '')}`} className="text-gray-900 hover:text-red-600">{phone}</a>
+                </div>
+              </div>
+            )}
+
+            {email && (
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Email</p>
+                  <a href={`mailto:${email}`} className="text-gray-900 hover:text-red-600">{email}</a>
+                </div>
+              </div>
+            )}
+
+            {address && (
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Address</p>
+                  <p className="text-gray-900 whitespace-pre-line">{address}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Hours */}
+          {hours && (
+            <div className="mt-8">
+              <h3 className="font-semibold text-gray-900 mb-3">Business hours</h3>
+              <div className="space-y-1 text-sm text-gray-700">
+                {hours.weekdays && <p><span className="font-medium">Mon – Fri:</span> {hours.weekdays}</p>}
+                {hours.saturday && <p><span className="font-medium">Saturday:</span> {hours.saturday}</p>}
+                {hours.sunday && <p><span className="font-medium">Sunday:</span> {hours.sunday}</p>}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Contact form */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{formTitle}</h2>
+          <form className="space-y-4" noValidate>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">{firstLabel}</label>
+                <input id="firstName" name="firstName" type="text" autoComplete="given-name"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">{lastLabel}</label>
+                <input id="lastName" name="lastName" type="text" autoComplete="family-name"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">{emailLabel}</label>
+              <input id="contactEmail" name="email" type="email" autoComplete="email"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            </div>
+            <div>
+              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">{phoneLabel}</label>
+              <input id="contactPhone" name="phone" type="tel" autoComplete="tel"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            </div>
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">{msgLabel}</label>
+              <textarea id="message" name="message" rows={5} autoComplete="off"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" />
+            </div>
+            <button type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition-colors">
+              {submitLabel}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   )
 }

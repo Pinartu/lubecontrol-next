@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getCategoryPageByPath, getAllCategoryPaths, getSiteSettings, getMainNav, getProductsByCategory } from '@/lib/cms'
+import { getCategoryPageByPath, getAllCategoryPaths, getSiteSettings, getMainNav, getProductsByCategory, getSubcategoriesByCategory } from '@/lib/cms'
 import { mapNavItems, getBreadcrumbs } from '@/lib/navigation'
 import Breadcrumb from '@/components/Breadcrumb'
 import CategoryPageComponent from '@/components/CategoryPage'
@@ -46,6 +46,10 @@ export default async function SlugPage({ params }: Props) {
     ? await getProductsByCategory(page.productCategory._id)
     : []
 
+  const subcategories = page.productCategory?._id
+    ? await getSubcategoriesByCategory(page.productCategory._id)
+    : []
+
   const navItems = mapNavItems(nav)
   const breadcrumbs = getBreadcrumbs(navItems, path)
   const pageTitle = slug[slug.length - 1]?.replace(/-/g, ' ') ?? path
@@ -56,6 +60,7 @@ export default async function SlugPage({ params }: Props) {
       <CategoryPageComponent
         page={page}
         products={products}
+        subcategories={subcategories}
         settings={settings}
         pageTitle={pageTitle}
       />

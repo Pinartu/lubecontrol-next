@@ -5,6 +5,7 @@ import {
   footerQuery,
   homePageQuery,
   cataloguePageQuery,
+  resourcesPageQuery,
   contactPageQuery,
   categoryPageByPathQuery,
   productsByCategoryQuery,
@@ -36,6 +37,10 @@ export async function getCataloguePage() {
 
 export async function getContactPage() {
   return client.fetch(contactPageQuery, {}, { next: { revalidate, tags: ['contactPage'] } })
+}
+
+export async function getResourcesPage() {
+  return client.fetch(resourcesPageQuery, {}, { next: { revalidate, tags: ['resourcesPage'] } })
 }
 
 export async function getCategoryPageByPath(path: string) {

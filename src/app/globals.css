@@ -22,3 +22,184 @@
     @apply font-heading uppercase font-bold;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SALES LINKS SECTION — Two large CTA cards for external stores
+   ═══════════════════════════════════════════════════════════════ */
+
+.sales-links-section {
+  padding: 4rem 1rem;
+  background: var(--color-surface-muted);
+}
+
+.sales-links-container {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.sales-links-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.sales-links-title {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.sales-links-subtitle {
+  color: var(--color-text-muted);
+  max-width: 36rem;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.sales-links-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .sales-links-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ─── Card ─────────────────────────────────────────────── */
+
+.sales-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 2rem 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.sales-card:hover {
+  box-shadow: 0 12px 32px rgba(0,0,0,0.10);
+}
+
+/* Top accent bar */
+.sales-card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-brand);
+  transition: height 0.25s ease;
+}
+
+.sales-card:hover .sales-card-accent {
+  height: 6px;
+}
+
+.sales-card[data-variant="secondary"] .sales-card-accent {
+  background: var(--color-header);
+}
+
+/* Icon */
+.sales-card-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.sales-card[data-variant="primary"] .sales-card-icon {
+  background: rgba(255, 210, 0, 0.12);
+  color: #b89600;
+}
+
+.sales-card[data-variant="secondary"] .sales-card-icon {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-header);
+}
+
+.sales-card:hover .sales-card-icon {
+  transform: scale(1.08);
+}
+
+/* Title */
+.sales-card-title {
+  font-size: 1.375rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+/* Description */
+.sales-card-description {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  max-width: 28rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Domain badge */
+.sales-card-domain {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  font-family: monospace;
+}
+
+/* CTA button */
+.sales-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.sales-card[data-variant="primary"] .sales-card-cta {
+  background: var(--color-brand);
+  color: var(--color-header);
+}
+
+.sales-card[data-variant="primary"]:hover .sales-card-cta {
+  background: var(--color-brand-hover);
+}
+
+.sales-card[data-variant="secondary"] .sales-card-cta {
+  background: var(--color-header);
+  color: #ffffff;
+}
+
+.sales-card[data-variant="secondary"]:hover .sales-card-cta {
+  background: #333;
+}

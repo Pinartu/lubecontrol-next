@@ -9,6 +9,7 @@ import {
   categoryPageByPathQuery,
   productsByCategoryQuery,
   allCategoryPathsQuery,
+  subcategoriesByCategoryQuery,
 } from './queries'
 
 const revalidate = 60
@@ -47,4 +48,8 @@ export async function getProductsByCategory(catId: string) {
 
 export async function getAllCategoryPaths(): Promise<Array<{ path: string }>> {
   return client.fetch(allCategoryPathsQuery, {}, { next: { revalidate } })
+}
+
+export async function getSubcategoriesByCategory(catId: string) {
+  return client.fetch(subcategoriesByCategoryQuery, { catId }, { next: { revalidate, tags: ['productCategory'] } })
 }

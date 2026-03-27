@@ -2,14 +2,14 @@ import { getHomePage } from '@/lib/cms'
 import HeroSection from '@/components/HeroSection'
 import FeatureBar from '@/components/FeatureBar'
 import WelcomeSection from '@/components/WelcomeSection'
-import CategoryGrid from '@/components/CategoryGrid'
+import SalesLinksSection from '@/components/SalesLinksSection'
 
 export default async function HomePage() {
   const page = await getHomePage()
 
   const heroSlides  = page?.heroSlides   ?? []
   const featureItems = page?.featureItems ?? []
-  const solutionCards = page?.solutionCards ?? []
+  const salesLinks = page?.salesLinks ?? []
 
   return (
     <>
@@ -21,10 +21,10 @@ export default async function HomePage() {
         ctaLabel={page?.welcomeCtaLabel}
         ctaHref={page?.welcomeCtaHref}
       />
-      <CategoryGrid
-        title={page?.solutionsTitle}
-        subtitle={page?.solutionsSubtitle}
-        cards={solutionCards}
+      <SalesLinksSection
+        title={page?.salesLinksTitle}
+        subtitle={page?.salesLinksSubtitle}
+        links={salesLinks}
       />
     </>
   )

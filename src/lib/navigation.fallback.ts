@@ -161,13 +161,23 @@ export const NAVIGATION_FALLBACK: NavItem[] = [
     href: '/auto-lube-systems',
     children: [
       {
-        heading: 'Automatic Lubrication',
+        heading: 'Single Point Lubricators',
         links: [
-          {label: 'ILC Autolubrication Systems', href: '/auto-lube-systems/ilc-autolubrication-systems'},
-          {label: 'Remote Grease Lines', href: '/auto-lube-systems/remote-grease-lines'},
-          {label: 'Single Point Lubricators', href: '/auto-lube-systems/single-point-lubricators'},
-          {label: 'Multi Point Lubricators', href: '/auto-lube-systems/multi-point-lubricators'},
-          {label: 'Centralised Lubrication Systems', href: '/auto-lube-systems/centralised-lubrication-systems'},
+          {label: 'Grease Bomb 120', href: '/auto-lube-systems/grease-bomb-120-single-point-lubricator'},
+          {label: 'Pulsarlube', href: '/auto-lube-systems/2225-2'},
+          {label: 'Simalube', href: '/auto-lube-systems/simalube'},
+          {label: 'Perma Lube', href: '/auto-lube-systems/perma-lube'},
+          {label: 'Memolub HPS Lubricator', href: '/auto-lube-systems/memolub-lubricator'},
+        ],
+      },
+      {
+        heading: 'Systems & Monitoring',
+        links: [
+          {label: 'ILC Auto Lubrication Systems', href: '/auto-lube-systems/ilc-autolubrication-systems'},
+          {label: 'Oil Rite Lubrication Systems', href: '/auto-lube-systems/oil-rite-lubrication-systems'},
+          {label: 'Purgex Lube Systems', href: '/auto-lube-systems/oil-rite-lube-systems'},
+          {label: 'Multi Line & Rotary Lube Pumps', href: '/auto-lube-systems/multi-line-and-rotary-lube-pumps'},
+          {label: 'Grease Metering & Monitoring', href: '/auto-lube-systems/2486-2'},
         ],
       },
     ],

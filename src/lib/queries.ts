@@ -38,3 +38,12 @@ export const productsByCategoryQuery = `*[_type == "product" && category._ref ==
 }`
 
 export const allCategoryPathsQuery = `*[_type == "categoryPage"]{path}`
+
+export const subcategoriesByCategoryQuery = `*[_type == "productCategory" && parent._ref == $catId]{
+  _id,
+  title,
+  "slug": slug.current,
+  description,
+  image,
+  routePath
+}`

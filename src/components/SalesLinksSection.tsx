@@ -61,15 +61,17 @@ function SalesCard({ link, index }: { link: SalesLink; index: number }) {
       {/* Icon */}
       <div className="sales-card-icon">
         {isRemoteGrease ? (
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
+          <img 
+            src="/fat-adder-logo.jpg" 
+            alt="Fat Adder Remote Grease Lines Logo" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+          />
         ) : (
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-          </svg>
+          <img 
+            src="/lube-control -icon.png" 
+            alt="Lube Control Shop Icon" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+          />
         )}
       </div>
 

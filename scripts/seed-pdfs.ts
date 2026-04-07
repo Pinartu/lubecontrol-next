@@ -1,3 +1,9 @@
+/**
+ * Upload PDFs from disk into Catalogue + Resources singletons.
+ * Folder: LEGACY_PDF_FOLDER env or default D:/LubeControl/test-pdfs
+ *
+ *   npx tsx scripts/seed-pdfs.ts
+ */
 import { loadEnvConfig } from '@next/env'
 loadEnvConfig(process.cwd())
 
@@ -17,7 +23,7 @@ const client = createClient({
   useCdn: false,
 })
 
-const PDF_FOLDER = 'D:/LubeControl/test-pdfs'
+const PDF_FOLDER = process.env.LEGACY_PDF_FOLDER?.trim() || 'D:/LubeControl/test-pdfs'
 
 // ─── CATALOGUE LIBRARY ITEMS (matching live site /catalogue-library/) ─────────
 const CATALOGUE_ITEMS: { title: string; filename: string }[] = [

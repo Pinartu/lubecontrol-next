@@ -54,6 +54,7 @@ export const categoryPageByPathQuery = `*[_type == "categoryPage" && path == $pa
   pdfDownloads[]{
     _key,
     title,
+    description,
     externalUrl,
     file{
       asset->{
@@ -85,5 +86,24 @@ export const subcategoriesByCategoryQuery = `*[_type == "productCategory" && par
   description,
   image,
   previewImageUrl,
-  "routePath": select(routePath._type == "slug" => routePath.current, routePath)
+  "routePath": select(routePath._type == "slug" => routePath.current, routePath),
+  "linkedPage": *[_type == "categoryPage" && references(^._id)][0]{
+    intro,
+    pdfDownloads[]{
+      _key,
+      title,
+      description,
+      externalUrl,
+      file{
+        asset->{
+          url
+        }
+      },
+      thumbnail{
+        asset->{
+          url
+        }
+      }
+    }
+  }
 }`

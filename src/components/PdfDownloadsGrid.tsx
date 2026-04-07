@@ -11,8 +11,13 @@ function isTrustedPreviewUrl(url: string): boolean {
     const parsed = new URL(url)
     // Allow any Sanity CDN URL
     if (TRUSTED_PREVIEW_HOSTS.some((h) => parsed.hostname.endsWith(h))) return true
-    // Allow HTTPS URLs that end with .pdf
-    if (parsed.protocol === 'https:' && parsed.pathname.toLowerCase().endsWith('.pdf')) return true
+    // Direct PDF URLs (legacy WP often still serves .pdf over HTTP)
+    if (
+      (parsed.protocol === 'https:' || parsed.protocol === 'http:') &&
+      parsed.pathname.toLowerCase().endsWith('.pdf')
+    ) {
+      return true
+    }
     return false
   } catch {
     return false
@@ -28,8 +33,9 @@ export interface PdfDownload {
   thumbnail?: { asset?: { url?: string } }
 }
 
+/** Prefer Sanity file URL when both exist (HTTPS CDN, reliable preview). */
 function getPdfUrl(d: PdfDownload): string | null {
-  return d.externalUrl || d.file?.asset?.url || null
+  return d.file?.asset?.url || d.externalUrl || null
 }
 
 /**
@@ -43,7 +49,7 @@ function previewEmbedUrl(originalUrl: string): string {
       u.pathname.toLowerCase().endsWith('.pdf') ||
       u.pathname.includes('/files/') ||
       u.hostname.endsWith('sanity.io')
-    if (u.protocol === 'https:' && isPdfish) {
+    if ((u.protocol === 'https:' || u.protocol === 'http:') && isPdfish) {
       return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(originalUrl)}`
     }
   } catch {

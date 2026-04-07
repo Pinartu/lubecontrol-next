@@ -66,6 +66,7 @@ export default function CategoryPage({ page, products = [], subcategories = [], 
   const hasSubcategories = subcategories.length > 0
   const hasProducts = products.length > 0
   const hasPdfs = (page?.pdfDownloads?.length ?? 0) > 0
+  const anySubPdf = subcategories.some((s) => (s.pdfDownloads?.length ?? 0) > 0)
 
   return (
     <div className="min-h-screen">
@@ -99,9 +100,25 @@ export default function CategoryPage({ page, products = [], subcategories = [], 
             <h2 className="text-2xl font-bold text-text mb-6 uppercase tracking-wide border-b-2 border-brand pb-2">
               Browse Categories
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              className={
+                anySubPdf
+                  ? 'grid grid-cols-1 lg:grid-cols-2 gap-10'
+                  : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
+              }
+            >
               {subcategories.map((sub) => (
-                <SubcategoryCard key={sub._id} subcategory={sub} />
+                <div key={sub._id} className="flex flex-col gap-6 min-w-0">
+                  <SubcategoryCard subcategory={sub} />
+                  {sub.pdfDownloads && sub.pdfDownloads.length > 0 ? (
+                    <div className="rounded-xl border border-border bg-card/40 px-4 py-5 sm:px-5">
+                      <h3 className="text-sm font-bold text-text uppercase tracking-wide mb-4 border-b border-border pb-2">
+                        {sub.title} — downloads
+                      </h3>
+                      <PdfDownloadsGrid downloads={sub.pdfDownloads} />
+                    </div>
+                  ) : null}
+                </div>
               ))}
             </div>
           </section>
@@ -132,7 +149,11 @@ export default function CategoryPage({ page, products = [], subcategories = [], 
         )}
 
         {/* ── Empty state ── */}
-        {!hasSubcategories && !hasProducts && !hasPdfs && !page?.intro?.length && (
+        {!hasSubcategories &&
+          !hasProducts &&
+          !hasPdfs &&
+          !page?.intro?.length &&
+          !anySubPdf && (
           <div className="text-center py-16 text-text-muted">
             <svg className="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />

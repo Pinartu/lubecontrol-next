@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 interface FeatureItem {
   icon?: string
   text: string
@@ -8,7 +10,7 @@ interface Props {
   items: FeatureItem[]
 }
 
-const ICONS: Record<string, React.ReactNode> = {
+const ICONS: Record<string, ReactNode> = {
   truck: (
     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}

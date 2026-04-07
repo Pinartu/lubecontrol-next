@@ -1,15 +1,17 @@
-type BlockChild = {_type?: string; text?: string}
-type Block = {_type?: string; children?: BlockChild[]}
-
-export function blocksToPlainText(blocks: unknown, maxLen = 200): string {
+/**
+ * Minimal portable text → plain string for category card blurbs (no extra dependency).
+ */
+export function blocksToPlainText(blocks: unknown): string {
   if (!Array.isArray(blocks)) return ''
   const parts: string[] = []
-  for (const b of blocks as Block[]) {
-    if (b._type !== 'block' || !b.children) continue
-    for (const c of b.children) {
-      if (c.text) parts.push(c.text)
+  for (const block of blocks) {
+    if (typeof block !== 'object' || block === null) continue
+    const b = block as {_type?: string; children?: Array<{text?: string}>}
+    if (b._type !== 'block' || !Array.isArray(b.children)) continue
+    for (const child of b.children) {
+      if (child?.text) parts.push(child.text)
     }
+    parts.push(' ')
   }
-  const s = parts.join(' ').replace(/\s+/g, ' ').trim()
-  return s.length > maxLen ? `${s.slice(0, maxLen)}…` : s
+  return parts.join('').replace(/\s+/g, ' ').trim()
 }

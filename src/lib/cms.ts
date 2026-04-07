@@ -1,3 +1,4 @@
+import type { Subcategory } from '@/components/SubcategoryCard'
 import { client } from './sanity'
 import {
   siteSettingsQuery,
@@ -55,6 +56,26 @@ export async function getAllCategoryPaths(): Promise<Array<{ path: string }>> {
   return client.fetch(allCategoryPathsQuery, {}, { next: { revalidate } })
 }
 
-export async function getSubcategoriesByCategory(catId: string) {
-  return client.fetch(subcategoriesByCategoryQuery, { catId }, { next: { revalidate, tags: ['productCategory'] } })
+type SubcategorySanityRow = Omit<Subcategory, 'intro' | 'pdfDownloads'> & {
+  linkedPage?: {
+    intro?: unknown[]
+    pdfDownloads?: NonNullable<Subcategory['pdfDownloads']>
+  }
+}
+
+export async function getSubcategoriesByCategory(catId: string): Promise<Subcategory[]> {
+  const rows = await client.fetch<SubcategorySanityRow[]>(
+    subcategoriesByCategoryQuery,
+    { catId },
+    { next: { revalidate, tags: ['productCategory', 'categoryPage'] } },
+  )
+  return (rows ?? []).map((row) => {
+    const { linkedPage, ...rest } = row
+    const pdfs = linkedPage?.pdfDownloads
+    return {
+      ...rest,
+      intro: linkedPage?.intro,
+      pdfDownloads: pdfs?.length ? pdfs : undefined,
+    }
+  })
 }
